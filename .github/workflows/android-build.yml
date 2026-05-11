@@ -44,6 +44,12 @@ jobs:
                     "package_name": "com.blurr.voice"
                   }
                 },
+                "oauth_client": [
+                  {
+                    "client_id": "000000000000-dummy.apps.googleusercontent.com",
+                    "client_type": 3
+                  }
+                ],
                 "api_key": [
                   {
                     "current_key": "dummy-key-for-ci-build"
