@@ -124,10 +124,9 @@ class MainActivity : BaseNavigationActivity() {
         val currentUser = auth.currentUser
         val profileManager = UserProfileManager(this)
 
-        if (currentUser == null || !profileManager.isProfileComplete()) {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-            return
+        // Login bypass: ensure a default local profile exists, skip LoginActivity
+        if (!profileManager.isProfileComplete()) {
+            profileManager.saveProfile("User", "user@local")
         }
         onboardingManager = OnboardingManager(this)
         if (!onboardingManager.isOnboardingCompleted()) {
@@ -237,11 +236,7 @@ class MainActivity : BaseNavigationActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (auth.currentUser == null) {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-            return
-        }
+        // Login bypass: skip currentUser null check
         
         showLoading(true)
         performBillingCheck()
