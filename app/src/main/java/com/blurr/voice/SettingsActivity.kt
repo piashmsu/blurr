@@ -23,6 +23,7 @@ import com.blurr.voice.api.PicovoiceKeyManager
 import com.blurr.voice.api.TTSVoice
 import com.blurr.voice.utilities.SpeechCoordinator
 import com.blurr.voice.utilities.VoicePreferenceManager
+import com.blurr.voice.utilities.ApiKeyManager
 import com.blurr.voice.utilities.UserProfileManager
 import com.blurr.voice.utilities.WakeWordManager
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +43,7 @@ class SettingsActivity : BaseNavigationActivity() {
     private lateinit var editUserName: android.widget.EditText
     private lateinit var editUserEmail: android.widget.EditText
     private lateinit var editWakeWordKey: android.widget.EditText
+    private lateinit var editGeminiApiKey: android.widget.EditText
     private lateinit var textGetPicovoiceKeyLink: TextView
     private lateinit var wakeWordButton: TextView
     private lateinit var buttonSignOut: Button
@@ -108,6 +110,7 @@ class SettingsActivity : BaseNavigationActivity() {
         batteryOptimizationHelpButton = findViewById(R.id.batteryOptimizationHelpButton)
       
         editWakeWordKey = findViewById(R.id.editWakeWordKey)
+        editGeminiApiKey = findViewById(R.id.editGeminiApiKey)
         wakeWordButton = findViewById(R.id.wakeWordButton)
 
         buttonSignOut = findViewById(R.id.buttonSignOut)
@@ -187,6 +190,16 @@ class SettingsActivity : BaseNavigationActivity() {
 
         buttonSignOut.setOnClickListener {
             showSignOutConfirmationDialog()
+        }
+
+        findViewById<TextView>(R.id.buttonSaveApiKey).setOnClickListener {
+            val key = editGeminiApiKey.text.toString().trim()
+            if (key.isNotEmpty()) {
+                sharedPreferences.edit { putString(ApiKeyManager.KEY_GEMINI_API_KEYS, key) }
+                Toast.makeText(this, "API Key saved!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Please enter an API key", Toast.LENGTH_SHORT).show()
+            }
         }
 
         findViewById<TextView>(R.id.viewTaskLogsButton).setOnClickListener {
@@ -272,6 +285,10 @@ class SettingsActivity : BaseNavigationActivity() {
     }
 
     private fun loadAllSettings() {
+
+        // Load saved Gemini API key
+        val savedApiKey = sharedPreferences.getString(ApiKeyManager.KEY_GEMINI_API_KEYS, null)
+        editGeminiApiKey.setText(savedApiKey ?: "")
 
         // Inside loadAllSettings()
         val keyManager = PicovoiceKeyManager(this)
